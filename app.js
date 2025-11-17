@@ -1,19 +1,19 @@
 /* =====================================================================
-   app.js - V15 (Com Trava de Foco no Modal)
+   app.js - Main Application Logic
    ===================================================================== */
 
 (function() {
   
   document.addEventListener('DOMContentLoaded', function () {
     initCursor();
-    initMobileNav();    // Controla o menu principal
-    initTimeline();     // Controla a Timeline, Explore, e At a Glance
-    initArticleModals(); // Controla os artigos In-Depth e Culture
+    initMobileNav();    // Controls main menu
+    initTimeline();     // Controls Timeline, Explore, and At a Glance
+    initArticleModals(); // Controls In-Depth and Culture articles
     initSkipLink();
   });
 
   /**
-   * 1. CURSOR CUSTOMIZADO
+   * 1. Custom Cursor
    */
   function initCursor() {
     if (!window.matchMedia("(pointer: fine)").matches) {
@@ -43,7 +43,7 @@
 
 
   /**
-   * 2. NAVEGAÇÃO MOBILE (V13 - Lógica de Scroll Manual)
+   * 2. Mobile Navigation
    */
   
   let menuOpen = false;
@@ -86,7 +86,7 @@
 
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
-        // Se NÃO for um link de modal, faz o scroll
+        // Scroll if not a modal link
         if (menuOpen && !link.classList.contains('modal-trigger')) {
           e.preventDefault();
           const href = link.getAttribute('href');
@@ -113,7 +113,7 @@
   }
 
   /**
-   * 3. TIMELINE (V14 - Controla Timeline, Explore, e At a Glance)
+   * 3. Timeline Logic
    */
   function initTimeline() {
     const allTimelineLists = document.querySelectorAll('.timeline__list');
@@ -143,48 +143,47 @@
 
 
   /**
-   * 4. FUNÇÃO: IN-DEPTH ARTICLE MODALS
-   * (VERSÃO POLIDA COM FOCUS TRAP)
+   * 4. Article Modals (With Focus Trap)
    */
   function initArticleModals() {
     const modalTriggers = document.querySelectorAll('.modal-trigger');
     const body = document.body;
 
-    // Variáveis para guardar o foco
+    // Focus variables
     let lastFocusedElement;
     let currentModal = null;
 
-    // Função para abrir o modal
+    // Open modal
     const openModal = (modal) => {
-      lastFocusedElement = document.activeElement; // Salva o elemento focado
+      lastFocusedElement = document.activeElement; // Save focused element
       modal.classList.add('is-visible');
       body.classList.add('modal-open');
       currentModal = modal;
       
-      // Foca o botão de fechar assim que o modal abre
+      // Focus close button on open
       modal.querySelector('.modal-close').focus();
       
-      // Adiciona o listener de "trava de foco"
+      // Add focus trap listener
       modal.addEventListener('keydown', trapFocus);
     };
 
-    // Função para fechar o modal
+    // Close modal
     const closeModal = (modal) => {
       if (!modal) return;
       modal.classList.remove('is-visible');
       body.classList.remove('modal-open');
       currentModal = null;
       
-      // Remove o listener
+      // Remove listener
       modal.removeEventListener('keydown', trapFocus);
       
-      // Devolve o foco para o elemento original
+      // Return focus to original element
       if (lastFocusedElement) {
         lastFocusedElement.focus();
       }
     };
 
-    // Função que faz a "trava de foco"
+    // Focus trap function
     const trapFocus = (e) => {
       if (e.key !== 'Tab' || !currentModal) return;
 
@@ -197,25 +196,25 @@
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
 
-      if (e.shiftKey) { // Se for Shift + Tab
+      if (e.shiftKey) { // Shift + Tab
         if (document.activeElement === firstElement) {
-          lastElement.focus(); // vai para o último
+          lastElement.focus(); // Move to last
           e.preventDefault();
         }
-      } else { // Se for só Tab
+      } else { // Tab only
         if (document.activeElement === lastElement) {
-          firstElement.focus(); // vai para o primeiro
+          firstElement.focus(); // Move to first
           e.preventDefault();
         }
       }
       
-      // Fechar com Escape
+      // Close on Escape
       if (e.key === 'Escape') {
         closeModal(currentModal);
       }
     };
 
-    // Abrir com clique
+    // Open on click
     modalTriggers.forEach(trigger => {
       trigger.addEventListener('click', (e) => {
         e.preventDefault();
@@ -226,7 +225,7 @@
       });
     });
 
-    // Fechar com o botão "X"
+    // Close with X button
     document.querySelectorAll('.modal-close').forEach(button => {
       button.addEventListener('click', (e) => {
         e.preventDefault();
@@ -234,7 +233,7 @@
       });
     });
 
-    // Fechar clicando no fundo escuro
+    // Close on backdrop click
     document.querySelectorAll('.modal-overlay').forEach(modal => {
       modal.addEventListener('click', (e) => {
         if (e.target === modal) {
@@ -243,7 +242,7 @@
       });
     });
     
-    // Fechar com a tecla Escape (listener global de fallback)
+    // Close on Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && currentModal) {
             closeModal(currentModal);
@@ -253,7 +252,7 @@
 
 
   /**
-   * 5. SKIP LINK (Acessibilidade)
+   * 5. Skip Link
    */
   function initSkipLink() {
     const skipLink = document.querySelector('.skip-link');
@@ -266,4 +265,4 @@
     });
   }
 
-})(); // Fim da IIFE
+})();
